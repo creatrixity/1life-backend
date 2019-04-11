@@ -1,5 +1,6 @@
 "use strict";
 
+const Helpers = use('Helpers')
 const Module = use("App/Models/Module");
 const UserLesson = use("App/Models/UserLesson");
 const UserModule = use("App/Models/UserModule");
@@ -24,6 +25,25 @@ class ModuleController {
       module,
       lessons
     };
+  }
+
+  /**
+   * Gets data for the module
+   * 
+   * @param {*} request
+   * @param {*} response
+   * @param {*} params
+   * @param {*} view
+   */
+  async getModuleData({ request, view }) {
+    const {
+      id,
+      module
+    } = request.only(['id', 'module'])
+
+    const renderPath = id ? `modules.${module}.lesson-${id}` : `modules.${module}.index`;
+
+    return view.render(renderPath)
   }
 
   /**

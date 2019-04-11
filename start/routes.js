@@ -22,6 +22,7 @@ Route.on('/').render('welcome')
 Route
   .group(() => {
     Route.get('/modules/:id', 'ModuleController.index')
+    Route.post('/getModuleData', 'ModuleController.getModuleData')
     Route.post('/modules/getUserModules', 'ModuleController.getUserModules')
     Route.post('/modules/getUserLessons', 'ModuleController.getUserLessons')
     Route.post('/modules/updateUserLesson', 'ModuleController.updateUserLessonInstance')
