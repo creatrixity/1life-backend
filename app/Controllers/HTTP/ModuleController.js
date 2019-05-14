@@ -38,10 +38,12 @@ class ModuleController {
   async getModuleData({ request, view }) {
     const {
       id,
-      module
-    } = request.only(['id', 'module'])
+      module,
+      course
+    } = request.only([ 'id', 'module', 'course' ])
 
-    const renderPath = id ? `modules.${module}.lesson-${id}` : `modules.${module}.index`;
+    const renderPath = id ? `modules.${course}.${module}.lesson-${id}`:
+                            `modules.${course}.${module}.index`;
 
     return view.render(renderPath)
   }
@@ -56,7 +58,7 @@ class ModuleController {
     const {
       userId,
       moduleId
-    } = request.only(['moduleId', 'userId'])
+    } = request.only([ 'moduleId', 'userId'])
 
     return await UserLesson
       .query()
@@ -75,13 +77,15 @@ class ModuleController {
    */
   async getUserModules({ request, auth }) {
     const {
-      userId
-    } = request.only(['userId'])
+      userId,
+      courseId
+    } = request.only(['userId', 'courseId'])
 
     return await UserModule
       .query()
       .where({
-        user_id: userId
+        user_id: userId,
+        course_id: courseId
       })
       .fetch();
   }

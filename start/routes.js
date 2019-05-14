@@ -27,5 +27,7 @@ Route
     Route.post('/modules/getUserLessons', 'ModuleController.getUserLessons')
     Route.post('/modules/updateUserLesson', 'ModuleController.updateUserLessonInstance')
     Route.post('/modules/updateUserModule', 'ModuleController.updateUserModuleInstance')
+    Route.post('/feedback', 'FeedbackController.createFeedback')
+    Route.post('/feedback/getFeedback', 'FeedbackController.getFeedback')
   })
   .prefix('/api/v1')
