@@ -100,11 +100,12 @@ class ModuleController {
     // If we currently have no user lesson, create one.
     // If we have a user lesson, update with the new data
     const {
+      courseId,
       moduleId,
       lessonId,
       lessonsCount,
       progression
-    } = request.only(['moduleId', 'lessonId', 'progression', 'lessonsCount'])
+    } = request.only(['courseId', 'moduleId', 'lessonId', 'progression', 'lessonsCount'])
 
     const user = await auth.getUser();
     
@@ -114,6 +115,7 @@ class ModuleController {
     const userLessonsCount = await UserLesson
       .query()
       .where({
+        course_id: courseId,
         lesson_id: lessonId,
         module_id: moduleId,
         user_id: user.id
@@ -127,6 +129,7 @@ class ModuleController {
       await UserLesson
         .query()
         .where({
+          course_id: courseId,
           lesson_id: lessonId,
           module_id: moduleId,
           user_id: user.id
@@ -146,6 +149,7 @@ class ModuleController {
       await UserModule
       .query()
       .where({
+        course_id: courseId,
         module_id: moduleId,
         user_id: user.id,
       })
@@ -155,6 +159,7 @@ class ModuleController {
     } else {
       // Create the lesson.
       await UserLesson.findOrCreate({
+        course_id: courseId,
         lesson_id: lessonId,
         module_id: moduleId,
         user_id: user.id,
@@ -164,6 +169,7 @@ class ModuleController {
       userLessons = await UserLesson
       .query()
       .where({
+        course_id: courseId,
         module_id: moduleId,
         user_id: user.id
       })
@@ -171,6 +177,7 @@ class ModuleController {
 
       if (userLessons.toJSON().length <= 1){
         await UserModule.create({
+          course_id: courseId,
           module_id: moduleId,
           user_id: user.id,
           progression: 0
@@ -179,6 +186,7 @@ class ModuleController {
         await UserModule
         .query()
         .where({
+          course_id: courseId,
           module_id: moduleId,
           user_id: user.id,
         })
@@ -190,6 +198,7 @@ class ModuleController {
       userLessons = await UserLesson
       .query()
       .where({
+        course_id: courseId,
         module_id: moduleId,
         user_id: user.id
       })
