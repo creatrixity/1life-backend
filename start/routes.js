@@ -19,6 +19,7 @@ require('./apiAuthRoutes.js');
 const Route = use('Route')
 
 Route.on('/').render('welcome')
+Route.get('/users', 'UserController.index')
 Route
   .group(() => {
     Route.get('/modules/:id', 'ModuleController.index')
@@ -29,5 +30,6 @@ Route
     Route.post('/modules/updateUserModule', 'ModuleController.updateUserModuleInstance')
     Route.post('/feedback', 'FeedbackController.createFeedback')
     Route.post('/feedback/getFeedback', 'FeedbackController.getFeedback')
+    Route.get('/feedback/export/user-:userId-feedback.txt', 'FeedbackController.exportFeedback')
   })
   .prefix('/api/v1')

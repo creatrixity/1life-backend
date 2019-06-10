@@ -1,0 +1,47 @@
+@layout('layouts.app')
+@section('view-title')
+See Users
+@endsection
+@section('content')
+<div class="container" style="margin-top: 30px;">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>
+                        See Users
+                    </h3>
+                    <p class="small text-muted">Perform actions on users</p>
+
+                </div>
+
+                <div class="panel-body">
+                    <section class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <td><b>Name</b></td>
+                                    <td><b>Email</b></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @each(user in users)
+                                <tr>
+                                    <td>{{ user.name }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>
+                                        <a target="__blank" href="/api/v1/feedback/export/user-{{ user.id }}-feedback.txt?courseId=2" class="btn btn-sm btn-default" data-toggle="tooltip" data-placement="top" title="">
+                                            Export as Text
+                                        </a>
+                                    </td>
+                                </tr>
+                                @endeach
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
