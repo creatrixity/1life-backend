@@ -23,6 +23,9 @@ class ModuleSeeder {
       { title: 'Module 4: Financial Offense!' },
       { title: 'Module 5: Financial Defense!' },
       { title: 'Module 6: Fit For My Future!' },
+      { title: 'Getting Started', course: 2 },
+      { title: 'First Quarter', course: 2 },
+      { title: 'Second Quarter', course: 2 },
     ])
   }
 }

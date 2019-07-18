@@ -9,8 +9,6 @@ class UserLessonSchema extends Schema {
     this.create('user_lessons', (table) => {
       table.increments()
       table.integer('user_id')
-      table.integer('course_id').defaultsTo(1)
-      table.integer('module_id')
       table.integer('lesson_id')
       table.integer('progression').defaultsTo(0);
       table.timestamps()

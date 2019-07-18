@@ -10,7 +10,6 @@ class UserModuleSchema extends Schema {
       table.increments()
       table.integer('user_id')
       table.integer('module_id')
-      table.integer('course_id')
       table.integer('progression').defaultsTo(0);
       table.timestamps()
     })

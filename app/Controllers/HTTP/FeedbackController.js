@@ -18,6 +18,7 @@ class FeedbackController {
     const {
 			answer,
 			question,
+			type,
 			user_id,
 			course_id,
 			module_id,
@@ -26,7 +27,8 @@ class FeedbackController {
     } = request.all()
 
     const queryParams = {
-			user_id,
+      user_id,
+      type,
 			course_id,
 			module_id,
 			lesson_id,
