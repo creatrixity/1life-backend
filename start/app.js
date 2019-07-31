@@ -35,7 +35,8 @@ const providers = [
 */
 const aceProviders = [
   '@adonisjs/lucid/providers/MigrationsProvider',
-  'adonis-auth-scaffold/providers/AdonisAuthScaffoldProvider'
+  'adonis-auth-scaffold/providers/AdonisAuthScaffoldProvider',
+  '@adonisjs/vow/providers/VowProvider'
 ]
 
 /*

@@ -3,14 +3,16 @@
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Model = use('Model')
 
-class Lesson extends Model {
+class Feedback extends Model {
   static get visible () {
     return [
       'id',
-      'module_id',
-      'title'
+      'question',
+      'answer',
+      'type',
+      'serial_id'
     ]
   }
 }
 
-module.exports = Lesson
+module.exports = Feedback

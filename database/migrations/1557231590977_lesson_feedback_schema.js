@@ -2,7 +2,7 @@
 
 const Schema = use('Schema')
 
-class UserFeedbackSchema extends Schema {
+class LessonFeedbackSchema extends Schema {
   up () {
     if (!this.hasTable('lesson_feedback')) return;
 
@@ -16,8 +16,8 @@ class UserFeedbackSchema extends Schema {
   }
 
   down () {
-    this.drop('user_feedback')
+    this.drop('lesson_feedback')
   }
 }
 
-module.exports = UserFeedbackSchema
+module.exports = LessonFeedbackSchema

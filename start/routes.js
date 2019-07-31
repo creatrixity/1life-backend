@@ -22,12 +22,18 @@ Route.on('/').render('welcome')
 Route.get('/users', 'UserController.index')
 Route
   .group(() => {
-    Route.get('/modules/:id', 'ModuleController.index')
-    Route.post('/getModuleData', 'ModuleController.getModuleData')
+    Route.get('/courses', 'CourseController.index')
+    Route.get('/courses/:courseId/modules', 'CourseController.getCourseModules')
+
+    Route.post('/fetchModuleLessonView', 'ModuleController.fetchModuleLessonView')
+    Route.post('/fetchLessonsByModuleId', 'LessonController.fetchLessonsByModuleId')
+
+    Route.post('/modules/:id', 'ModuleController.getModule')
     Route.post('/modules/getUserModules', 'ModuleController.getUserModules')
-    Route.post('/modules/getUserLessons', 'ModuleController.getUserLessons')
-    Route.post('/modules/updateUserLesson', 'ModuleController.updateUserLessonInstance')
+    Route.get('/modules/getUserLessons', 'ModuleController.getUserLessons')
+    Route.get('/modules/updateUserLesson', 'ModuleController.updateUserLessonInstance')
     Route.post('/modules/updateUserModule', 'ModuleController.updateUserModuleInstance')
+
     Route.post('/feedback', 'FeedbackController.createFeedback')
     Route.post('/feedback/getFeedback', 'FeedbackController.getFeedback')
     Route.get('/feedback/export/user-:userId-feedback.txt', 'FeedbackController.exportFeedback')

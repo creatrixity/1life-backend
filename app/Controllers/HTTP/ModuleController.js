@@ -1,12 +1,13 @@
 "use strict";
 
 const Helpers = use('Helpers')
-const Module = use("App/Models/Module");
-const UserLesson = use("App/Models/UserLesson");
-const UserModule = use("App/Models/UserModule");
+const Lesson = use('App/Models/Lesson');
+const Module = use('App/Models/Module');
+const UserLesson = use('App/Models/UserLesson');
+const UserModule = use('App/Models/UserModule');
 
 class ModuleController {
-  _computeModulesProgression (lessons, lessonsCount) {
+  _calcModulesProgression (lessons, lessonsCount) {
     const totalProgressions = lessons.reduce((previousTotalProgression, currentLesson) => {
       return (previousTotalProgression) + currentLesson.progression
     }, 0);
@@ -14,17 +15,16 @@ class ModuleController {
     return totalProgressions / lessonsCount;  
   }
 
-  async index({ params }) {
-
+  async getModule({ params }) {
     const { id } = params
 
-    const module = await Module.find(id);
-    const lessons = await module.lessons().fetch(['id', 'module_id', 'title']);
-
-    return {
-      module,
-      lessons
-    };
+    const module = await Module
+      .query()
+      .where({ id })
+      .with('lessons')
+      .fetch();
+ 
+    return module
   }
 
   /**
@@ -35,15 +35,15 @@ class ModuleController {
    * @param {*} params
    * @param {*} view
    */
-  async getModuleData({ request, view }) {
+  async fetchModuleLessonView({ request, view }) {
     const {
-      id,
-      module,
-      course
-    } = request.only([ 'id', 'module', 'course' ])
+      lessonId,
+      moduleSlug,
+      courseSlug
+    } = request.only([ 'lessonId', 'moduleSlug', 'courseSlug' ])
 
-    const renderPath = id ? `modules.${course}.${module}.lesson-${id}`:
-                            `modules.${course}.${module}.index`;
+    const renderPath = lessonId && Number(lessonId) !== 0 ? `modules.${courseSlug}.${moduleSlug}.lesson-${lessonId}`:
+                            `modules.${courseSlug}.${moduleSlug}.index`;
 
     return view.render(renderPath)
   }
@@ -55,18 +55,15 @@ class ModuleController {
    * @param {Object<Auth>} request
    */
   async getUserLessons({ request, auth }) {
-    const {
-      userId,
-      moduleId
-    } = request.only([ 'moduleId', 'userId'])
+    const { userId, moduleId } = request.only(['userId', 'moduleId'])
 
-    return await UserLesson
-      .query()
-      .where({
-        module_id: moduleId,
-        user_id: userId
-      })
-      .fetch();
+    const userLessons = await UserLesson.query().where({ user_id: userId }).fetch();
+    const moduleLessonsCount = await Lesson.query().where({ module_id: moduleId }).getCount();
+
+    return {
+      userLessons,
+      moduleLessonsCount
+    };
   }
 
   /**
@@ -96,117 +93,56 @@ class ModuleController {
    * @param {Object<Request>} request
    * @param {Object<Auth>} request
    */
-  async updateUserLessonInstance ({ request, auth }) {
+  async updateUserLessonInstance ({ request, response, auth }) {
     // If we currently have no user lesson, create one.
     // If we have a user lesson, update with the new data
-    const {
-      courseId,
-      moduleId,
-      lessonId,
-      lessonsCount,
-      progression
-    } = request.only(['courseId', 'moduleId', 'lessonId', 'progression', 'lessonsCount'])
+    let { courseId, lessonId, moduleId, progression } = request.only(['courseId', 'lessonId', 'moduleId', 'progression'])
+    const course_id = courseId
+    const lesson_id = lessonId
+    const module_id = moduleId
 
     const user = await auth.getUser();
-    
-    let userLessons;
+    const user_id = user.id
 
-    // Do any user lessons match these parameters?
-    const userLessonsCount = await UserLesson
-      .query()
-      .where({
-        course_id: courseId,
-        lesson_id: lessonId,
-        module_id: moduleId,
-        user_id: user.id
-      })
-      .getCount();
+    const userLessonsCount = await UserLesson.query().where({ lesson_id, user_id }).getCount();
+    const moduleLessonsCount = await Lesson.query().where({ module_id }).getCount();
+
+    const hasUserLessons = userLessonsCount > 0
 
     // If we have found a lesson matching the params, we update that lesson and return all lessons in the module.
     // Else, we create a lesson with the provided params.
-    if (userLessonsCount > 0) {      
+    if (hasUserLessons) {
       // Update the lesson.
-      await UserLesson
-        .query()
-        .where({
-          course_id: courseId,
-          lesson_id: lessonId,
-          module_id: moduleId,
-          user_id: user.id
-        })
-        .update({
-          progression
-        })
-
-      userLessons = await UserLesson
-        .query()
-        .where({
-          module_id: moduleId,
-          user_id: user.id
-      })
-      .fetch()
-
-      await UserModule
-      .query()
-      .where({
-        course_id: courseId,
-        module_id: moduleId,
-        user_id: user.id,
-      })
-      .update({
-        progression: this._computeModulesProgression(userLessons.toJSON(), lessonsCount)
-      })
+      await UserLesson.query().where({ lesson_id, user_id }).update({ progression })
     } else {
-      // Create the lesson.
-      await UserLesson.findOrCreate({
-        course_id: courseId,
-        lesson_id: lessonId,
-        module_id: moduleId,
-        user_id: user.id,
-        progression
-      })
-
-      userLessons = await UserLesson
-      .query()
-      .where({
-        course_id: courseId,
-        module_id: moduleId,
-        user_id: user.id
-      })
-      .fetch()
-
-      if (userLessons.toJSON().length <= 1){
-        await UserModule.create({
-          course_id: courseId,
-          module_id: moduleId,
-          user_id: user.id,
-          progression: 0
-        })
-      } else {
-        await UserModule
-        .query()
-        .where({
-          course_id: courseId,
-          module_id: moduleId,
-          user_id: user.id,
-        })
-        .update({
-          progression: this._computeModulesProgression(userLessons.toJSON(), lessonsCount)
-        })  
-      }
-
-      userLessons = await UserLesson
-      .query()
-      .where({
-        course_id: courseId,
-        module_id: moduleId,
-        user_id: user.id
-      })
-      .fetch()
-
+      // Create the lesson
+      await UserLesson.findOrCreate({ lesson_id, user_id, progression })
     }
 
-    return userLessons
+    let userLessons = await UserLesson.query().where({ user_id }).fetch()
+    const shouldCreateUserModule = userLessons.toJSON().length <= 1;
+
+    if (shouldCreateUserModule) {
+      await UserModule.create({ course_id, module_id, user_id, progression: 0 })
+
+      return {
+        userLessons,
+        moduleLessonsCount
+      }
+    }
+
+    const lessonsCount = await Lesson.query().where({ module_id }).getCount();
+    progression = this._calcModulesProgression(userLessons.toJSON(), lessonsCount)
+
+    await UserModule
+    .query()
+    .where({ course_id, module_id, user_id })
+    .update({ progression })
+    
+    return {
+      userLessons,
+      moduleLessonsCount
+    };
   }
 }
 
