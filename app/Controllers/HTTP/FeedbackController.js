@@ -1,7 +1,8 @@
 "use strict";
 
-const UserFeedback = use("App/Models/UserFeedback");
-const UserModule = use("App/Models/UserModule");
+const Feedback = use('App/Models/Feedback');
+// const UserFeedback = use('App/Models/UserFeedback');
+const LessonFeedback = use('App/Models/LessonFeedback');
 
 function generateAnswer(answer, type) {
   if (type === 'rating') return `${answer} (on a scale of 1 - 5)`;
@@ -18,6 +19,7 @@ class FeedbackController {
     const {
 			answer,
 			question,
+			type,
 			user_id,
 			course_id,
 			module_id,
@@ -26,31 +28,55 @@ class FeedbackController {
     } = request.all()
 
     const queryParams = {
-			user_id,
+      user_id,
+      type,
 			course_id,
 			module_id,
 			lesson_id,
 			feedback_id
     }
 
-    let feedbackCount = await UserFeedback.query().where(queryParams).getCount();
+    const updateQueryCriteria = {
+      // user_id: queryParams.user_id,
+      type: queryParams.type,
+      // lesson_id: queryParams.lesson_id,
+      serial_id: queryParams.feedback_id
+    }
+    // Handle feedback duplicates.
+    // If we have the same exact feedback, make updates.
+    // Else, we create a new feedback.
+    let feedbackCount = await Feedback
+      .query()
+      .where(updateQueryCriteria)
+      .getCount();
     
     if (feedbackCount) {
-      await UserFeedback
+      await Feedback
         .query()
-        .where(queryParams)
+        .where(updateQueryCriteria)
         .update({
           answer,
           question,
-          ...queryParams
+          ...updateQueryCriteria
         })
     }
     
-    return await UserFeedback.findOrCreate({
+    const feedback =  await Feedback.findOrCreate({
       answer,
       question,
-      ...queryParams
+      ...updateQueryCriteria
     });
+
+    if (!feedbackCount) {
+      await LessonFeedback
+        .findOrCreate({
+          feedback_id: feedback.id,
+          lesson_id,
+          creator_id: user_id
+        })
+    }
+
+    return feedback;
   }
 
   async getFeedback({ request }) {
@@ -62,13 +88,21 @@ class FeedbackController {
     } = request.all()
 
     const queryParams = {
-			user_id,
-			course_id,
-			module_id,
-			lesson_id,
+      lesson_id,
+      creator_id: user_id
     }
 
-    return await UserFeedback.query().where(queryParams).fetch();    
+    const lessonFeedbacks = await LessonFeedback
+      .query()
+      .where(queryParams)
+      .with('feedbacks')
+      .fetch();
+    
+    const feedbacks = lessonFeedbacks.toJSON().map(({ feedbacks }) => {
+      return {...feedbacks[0]}
+    })
+
+    return feedbacks;
   }
 
   async exportFeedback({ request, response, params }) {

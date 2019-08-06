@@ -4,11 +4,14 @@
 const Model = use('Model')
 
 class Course extends Model {
-  static get visible () {
-    return ['id', 'title']
+  static get visible() {
+    return [
+      'id',
+      'title'
+    ]
   }
 
-  lessons () {
+  modules() {
     return this.hasMany('App/Models/Module')
   }
 }

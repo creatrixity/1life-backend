@@ -10,6 +10,7 @@ class LessonsSchema extends Schema {
       table.increments()
       table.integer('module_id')
       table.string('title', 255).notNullable()
+      table.enum('type', ['lesson', 'tool']).defaultsTo('lesson')
       table.timestamps()
     })
   }

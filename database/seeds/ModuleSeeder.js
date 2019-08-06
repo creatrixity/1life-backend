@@ -17,12 +17,15 @@ class ModuleSeeder {
     await Database
     .from('modules')
     .insert([
-      { title: 'Module 1: Who Am I?' },
-      { title: 'Module 2: My Magnificent Future!' },
-      { title: 'Module 3: My Plan4Me!' },
-      { title: 'Module 4: Financial Offense!' },
-      { title: 'Module 5: Financial Defense!' },
-      { title: 'Module 6: Fit For My Future!' },
+      { title: 'Module 1: Who Am I?', course_id: 1 },
+      { title: 'Module 2: My Magnificent Future!', course_id: 1 },
+      { title: 'Module 3: My Plan4Me!', course_id: 1 },
+      { title: 'Module 4: Financial Offense!', course_id: 1 },
+      { title: 'Module 5: Financial Defense!', course_id: 1 },
+      { title: 'Module 6: Fit For My Future!', course_id: 1 },
+      { title: 'Getting Started', course_id: 2 },
+      { title: 'First Quarter', course_id: 2 },
+      { title: 'Second Quarter', course_id: 2 },
     ])
   }
 }

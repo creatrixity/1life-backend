@@ -9,7 +9,7 @@ class ModulesSchema extends Schema {
     this.create('modules', (table) => {
       table.increments()
       table.string('title', 255).notNullable()
-      table.integer('last_active_lesson', 11).defaultsTo(0)
+      table.integer('course_id').notNullable()
       table.timestamps()
     })
   }
