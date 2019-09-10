@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 module.exports = {
   /*
@@ -16,7 +16,7 @@ module.exports = {
   | Function - Receives the current origin and should return one of the above values.
   |
   */
-  origin: ['http://localhost:3000', 'http://134.209.63.107:3000'],
+  origin: ['http://localhost:3000', 'https://1liferoadmap.com'],
 
   /*
   |--------------------------------------------------------------------------
@@ -84,4 +84,4 @@ module.exports = {
   |
   */
   maxAge: 90
-}
+};
