@@ -62,7 +62,7 @@ class ModuleController {
     const { userId, moduleId } = request.only(['userId', 'moduleId']);
 
     const userLessons = await UserLesson.query()
-      .where({ user_id: userId })
+      .where({ user_id: userId, module_id: moduleId })
       .fetch();
     const moduleLessonsCount = await Lesson.query()
       .where({ module_id: moduleId })
