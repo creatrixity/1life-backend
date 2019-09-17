@@ -1,27 +1,25 @@
-'use strict'
+'use strict';
 
-const Course = use('App/Models/Course')
-const Module = use('App/Models/Module')
+const Course = use('App/Models/Course');
+const Module = use('App/Models/Module');
 
 class CourseController {
   async index() {
-    const courses = await Course
-      .query()
+    const courses = await Course.query()
       .withCount('modules')
-      .fetch()
+      .fetch();
 
     return courses;
   }
 
   async getCourseModules({ params }) {
-    const modules = await Module
-      .query()
+    const modules = await Module.query()
       .where('course_id', params.courseId)
       .withCount('lessons')
-      .fetch()
+      .fetch();
 
     return modules;
   }
 }
 
-module.exports = CourseController
+module.exports = CourseController;

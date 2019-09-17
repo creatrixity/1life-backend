@@ -21,19 +21,13 @@ const Route = use('Route');
 Route.on('/').render('welcome');
 Route.get('/users', 'UserController.index');
 Route.group(() => {
-  Route.get('/courses', 'CourseController.index');
-  Route.get('/courses/:courseId/modules', 'CourseController.getCourseModules');
-
-  Route.post(
-    '/fetchModuleLessonView',
-    'ModuleController.fetchModuleLessonView'
-  );
-  Route.post(
+  Route.get('/fetchModuleLessonView', 'ModuleController.fetchModuleLessonView');
+  Route.get(
     '/fetchLessonsByModuleId',
     'LessonController.fetchLessonsByModuleId'
   );
 
-  Route.post('/modules/:id', 'ModuleController.getModule');
+  Route.get('/modules/:id', 'ModuleController.getModule');
   Route.get('/modules/getUserModules', 'ModuleController.getUserModules');
   Route.get('/modules/getUserLessons', 'ModuleController.getUserLessons');
   Route.get(
@@ -46,7 +40,19 @@ Route.group(() => {
   );
 
   Route.post('/feedback', 'FeedbackController.createFeedback');
-  Route.post('/feedback/getFeedback', 'FeedbackController.getFeedback');
+  Route.get('/feedback/getFeedback', 'FeedbackController.getFeedback');
+  Route.get(
+    '/feedback/export/user-:userId-feedback.txt',
+    'FeedbackController.exportFeedback'
+  );
+})
+  .prefix('/api/v1')
+  .middleware(['auth']);
+
+Route.group(() => {
+  Route.get('/courses', 'CourseController.index');
+  Route.get('/courses/:courseId/modules', 'CourseController.getCourseModules');
+
   Route.get(
     '/feedback/export/user-:userId-feedback.txt',
     'FeedbackController.exportFeedback'
