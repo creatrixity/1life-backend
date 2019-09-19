@@ -20,7 +20,9 @@ const Route = use('Route');
 
 Route.on('/').render('welcome');
 Route.get('/users', 'UserController.index');
+
 Route.group(() => {
+  Route.get('/getAuthenticatedUser', 'UserController.getAuthenticatedUser');
   Route.get('/fetchModuleLessonView', 'ModuleController.fetchModuleLessonView');
   Route.get(
     '/fetchLessonsByModuleId',
