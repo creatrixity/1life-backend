@@ -29,12 +29,12 @@ Route.group(() => {
     'LessonController.fetchLessonsByModuleId'
   );
 
-  Route.get('/modules/:id', 'ModuleController.getModule');
   Route.get('/modules/getUserModules', 'ModuleController.getUserModules');
-  Route.get('/modules/getUserLessons', 'ModuleController.getUserLessons');
-  Route.get(
-    '/modules/updateUserLesson',
-    'ModuleController.updateUserLessonInstance'
+  Route.get('/modules/:id', 'ModuleController.getModule');
+  Route.get('/lessons/getUserLessons', 'LessonController.getUserLessons');
+  Route.post(
+    '/lessons/updateUserLesson',
+    'LessonController.updateUserLessonInstance'
   );
   Route.post(
     '/modules/updateUserModule',

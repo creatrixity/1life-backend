@@ -20,15 +20,15 @@ class FeedbackController {
       answer,
       question,
       type,
-      user_id,
       course_id,
       module_id,
       lesson_id,
       feedback_id
     } = request.all();
+    const user = await auth.getUser();
 
     const queryParams = {
-      user_id,
+      user_id: user.id,
       type,
       course_id,
       module_id,
@@ -62,7 +62,7 @@ class FeedbackController {
     const feedback = await Feedback.findOrCreate({
       answer,
       question,
-      creator_id: user_id,
+      creator_id: user.id,
       ...updateQueryCriteria
     });
 
@@ -70,19 +70,20 @@ class FeedbackController {
       await LessonFeedback.findOrCreate({
         feedback_id: feedback.id,
         lesson_id,
-        creator_id: user_id
+        creator_id: user.id
       });
     }
 
     return feedback;
   }
 
-  async getFeedback({ request }) {
-    const { user_id, lesson_id } = request.all();
+  async getFeedback({ request, auth }) {
+    const { lesson_id } = request.all();
+    const user = await auth.getUser();
 
     const queryParams = {
       lesson_id,
-      creator_id: user_id
+      creator_id: user.id
     };
 
     const lessonFeedbacks = await LessonFeedback.query()
