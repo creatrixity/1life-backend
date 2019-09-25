@@ -11,7 +11,7 @@ class UserLessonSchema extends Schema {
       table.integer('user_id');
       table.integer('module_id');
       table.integer('lesson_id');
-      table.integer('progression').defaultsTo(0);
+      table.integer('progression').defaultsTo(100);
       table.timestamps();
     });
   }

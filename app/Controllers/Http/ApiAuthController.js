@@ -1,12 +1,12 @@
-"use strict";
+'use strict';
 const MAIL_PATTERN = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-const Persona = use("Persona");
-const Config = use("Config");
-const User = use("App/Models/User");
-const UserRepository = use("App/Repositories/UserRepository");
+const Persona = use('Persona');
+const Config = use('Config');
+const User = use('App/Models/User');
+const UserRepository = use('App/Repositories/UserRepository');
 
-const { validate } = use("Validator");
+const { validate } = use('Validator');
 
 class ApiAuthController {
   async generateUserPayload(uid, credentials) {
@@ -18,7 +18,7 @@ class ApiAuthController {
       credentials,
       user,
       lessons
-    }
+    };
   }
 
   async attemptLogin(auth, uid, password) {
@@ -29,35 +29,35 @@ class ApiAuthController {
     const credentials = await auth
       .authenticator(authScheme)
       .withRefreshToken()
-      .attempt(uid, password)
-      
+      .attempt(uid, password);
+
     return this.generateUserPayload(uid, credentials);
   }
 
   async login({ request, auth, response }) {
-    const { uid, password } = request.only(["uid", "password"]);
+    const { uid, password } = request.only(['uid', 'password']);
 
     return this.attemptLogin(auth, uid, password);
   }
 
   async register({ request, auth, response }) {
     const payload = request.only([
-      "name",
-      "email",
-      "password",
-      "password_confirmation"
+      'name',
+      'email',
+      'password',
+      'password_confirmation'
     ]);
 
     const validation = await validate(
       payload,
-      Config.get("adonis-auth-scaffold.validationRules.registration"),
-      Config.get("adonis-auth-scaffold.validationMessages")()
+      Config.get('adonis-auth-scaffold.validationRules.registration'),
+      Config.get('adonis-auth-scaffold.validationMessages')()
     );
 
     if (validation.fails()) {
       return {
         errors: validation.messages()
-      }
+      };
     }
 
     try {
@@ -67,10 +67,9 @@ class ApiAuthController {
     } catch (error) {
       return {
         error
-      }
+      };
     }
   }
-
 }
 
 module.exports = ApiAuthController;
